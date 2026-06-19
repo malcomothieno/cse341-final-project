@@ -1,4 +1,4 @@
-const { getAllAuthors, getAuthorById, createAuthor, updateAuthor, deleteAuthor } = require('../models/authorsModel');
+const { getAllBooks, getBookById, createBook, updateBook, deleteBook } = require('../models/booksModel');
 
 const REQUIRED_FIELDS = ['firstName', 'lastName', 'nationality', 'birthYear', 'knownFor'];
 
