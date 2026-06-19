@@ -1,0 +1,124 @@
+# =============================================
+# Library API - REST Client Test File
+# =============================================
+
+@BASE_URL = http://localhost:3000
+# @BASE_URL = https://YOUR-RENDER-URL.onrender.com
+
+### Root
+GET {{BASE_URL}}/
+
+###
+
+### Swagger Docs
+GET {{BASE_URL}}/api-docs
+
+###
+
+# =============================================
+# BOOKS
+# =============================================
+
+### GET all books
+GET {{BASE_URL}}/books
+
+###
+
+### GET single book by ID
+GET {{BASE_URL}}/books/REPLACE_WITH_BOOK_ID
+
+###
+
+### POST - Create a book (all 8 fields required)
+POST {{BASE_URL}}/books
+Content-Type: application/json
+
+{
+  "title": "Purple Hibiscus",
+  "authorName": "Chimamanda Ngozi Adichie",
+  "genre": "Literary Fiction",
+  "publishedYear": 2003,
+  "isbn": "9781616202415",
+  "pageCount": 307,
+  "language": "English",
+  "synopsis": "A coming-of-age story about a Nigerian girl escaping her oppressive father and finding her voice."
+}
+
+###
+
+### POST - Validation test (missing fields - should return 400)
+POST {{BASE_URL}}/books
+Content-Type: application/json
+
+{
+  "title": "Incomplete Book"
+}
+
+###
+
+### PUT - Update a book
+PUT {{BASE_URL}}/books/REPLACE_WITH_BOOK_ID
+Content-Type: application/json
+
+{
+  "genre": "Coming-of-Age Fiction",
+  "pageCount": 310
+}
+
+###
+
+### DELETE - Delete a book
+DELETE {{BASE_URL}}/books/REPLACE_WITH_BOOK_ID
+
+###
+
+# =============================================
+# AUTHORS
+# =============================================
+
+### GET all authors
+GET {{BASE_URL}}/authors
+
+###
+
+### GET single author by ID
+GET {{BASE_URL}}/authors/REPLACE_WITH_AUTHOR_ID
+
+###
+
+### POST - Create an author (all fields required)
+POST {{BASE_URL}}/authors
+Content-Type: application/json
+
+{
+  "firstName": "Wole",
+  "lastName": "Soyinka",
+  "nationality": "Nigerian",
+  "birthYear": 1934,
+  "knownFor": "Death and the King's Horseman, The Lion and the Jewel, Ake"
+}
+
+###
+
+### POST - Validation test (missing fields - should return 400)
+POST {{BASE_URL}}/authors
+Content-Type: application/json
+
+{
+  "firstName": "NoLastName"
+}
+
+###
+
+### PUT - Update an author
+PUT {{BASE_URL}}/authors/REPLACE_WITH_AUTHOR_ID
+Content-Type: application/json
+
+{
+  "knownFor": "Death and the King's Horseman, The Lion and the Jewel, Ake, Season of Anomy"
+}
+
+###
+
+### DELETE - Delete an author
+DELETE {{BASE_URL}}/authors/REPLACE_WITH_AUTHOR_ID

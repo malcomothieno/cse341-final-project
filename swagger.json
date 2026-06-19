@@ -1,0 +1,232 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Library API",
+    "description": "RESTful API for managing a library database. Full CRUD operations on Books (8 fields) and Authors collections with data validation and error handling.",
+    "version": "1.0.0"
+  },
+  "host": "YOUR-RENDER-URL.onrender.com",
+  "schemes": ["https"],
+  "tags": [
+    { "name": "Books", "description": "Endpoints for managing book records — 8 fields per document" },
+    { "name": "Authors", "description": "Endpoints for managing author records" }
+  ],
+  "paths": {
+    "/books": {
+      "get": {
+        "tags": ["Books"],
+        "summary": "Get all books",
+        "description": "Retrieves all documents from the MongoDB books collection.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": { "description": "Array of book objects", "schema": { "type": "array", "items": { "$ref": "#/definitions/Book" } } },
+          "500": { "description": "Internal server error" }
+        }
+      },
+      "post": {
+        "tags": ["Books"],
+        "summary": "Create a new book",
+        "description": "Adds a new book to the books collection. All 8 fields are required. Returns the new book's ID.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "body", "name": "body", "required": true, "description": "Book object — all 8 fields required", "schema": { "$ref": "#/definitions/BookInput" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Book created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string", "example": "Book created successfully" },
+                "id": { "type": "string", "example": "665f1a2b3c4d5e6f7a8b9c0d" }
+              }
+            }
+          },
+          "400": { "description": "Validation failed — missing or invalid fields" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/books/{id}": {
+      "get": {
+        "tags": ["Books"],
+        "summary": "Get a book by ID",
+        "description": "Retrieves a single book from MongoDB using its unique ObjectId.",
+        "produces": ["application/json"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string", "description": "MongoDB ObjectId of the book", "example": "665f1a2b3c4d5e6f7a8b9c0d" }
+        ],
+        "responses": {
+          "200": { "description": "Book found", "schema": { "$ref": "#/definitions/Book" } },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Book not found" }
+        }
+      },
+      "put": {
+        "tags": ["Books"],
+        "summary": "Update a book by ID",
+        "description": "Updates fields on an existing book. Only provided fields are changed. Validates publishedYear, pageCount, and isbn format.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string", "description": "MongoDB ObjectId of the book to update", "example": "665f1a2b3c4d5e6f7a8b9c0d" },
+          { "in": "body", "name": "body", "required": true, "description": "Fields to update", "schema": { "$ref": "#/definitions/BookInput" } }
+        ],
+        "responses": {
+          "200": { "description": "Book updated successfully" },
+          "400": { "description": "Validation failed or invalid ID" },
+          "404": { "description": "Book not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Books"],
+        "summary": "Delete a book by ID",
+        "description": "Permanently removes a book from the books collection.",
+        "produces": ["application/json"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string", "description": "MongoDB ObjectId of the book to delete", "example": "665f1a2b3c4d5e6f7a8b9c0d" }
+        ],
+        "responses": {
+          "200": { "description": "Book deleted successfully" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Book not found" }
+        }
+      }
+    },
+    "/authors": {
+      "get": {
+        "tags": ["Authors"],
+        "summary": "Get all authors",
+        "description": "Retrieves all documents from the MongoDB authors collection.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": { "description": "Array of author objects", "schema": { "type": "array", "items": { "$ref": "#/definitions/Author" } } },
+          "500": { "description": "Internal server error" }
+        }
+      },
+      "post": {
+        "tags": ["Authors"],
+        "summary": "Create a new author",
+        "description": "Adds a new author to the authors collection. All 5 fields are required. Returns the new author's ID.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "in": "body", "name": "body", "required": true, "description": "Author object — all fields required", "schema": { "$ref": "#/definitions/AuthorInput" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Author created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string", "example": "Author created successfully" },
+                "id": { "type": "string", "example": "665f1a2b3c4d5e6f7a8b9c0d" }
+              }
+            }
+          },
+          "400": { "description": "Validation failed — missing or invalid fields" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/authors/{id}": {
+      "get": {
+        "tags": ["Authors"],
+        "summary": "Get an author by ID",
+        "description": "Retrieves a single author from MongoDB using their unique ObjectId.",
+        "produces": ["application/json"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string", "description": "MongoDB ObjectId of the author", "example": "665f1a2b3c4d5e6f7a8b9c0d" }
+        ],
+        "responses": {
+          "200": { "description": "Author found", "schema": { "$ref": "#/definitions/Author" } },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Author not found" }
+        }
+      },
+      "put": {
+        "tags": ["Authors"],
+        "summary": "Update an author by ID",
+        "description": "Updates fields on an existing author. Only provided fields are modified. Validates birthYear and name types.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string", "description": "MongoDB ObjectId of the author to update", "example": "665f1a2b3c4d5e6f7a8b9c0d" },
+          { "in": "body", "name": "body", "required": true, "description": "Fields to update", "schema": { "$ref": "#/definitions/AuthorInput" } }
+        ],
+        "responses": {
+          "200": { "description": "Author updated successfully" },
+          "400": { "description": "Validation failed or invalid ID" },
+          "404": { "description": "Author not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Authors"],
+        "summary": "Delete an author by ID",
+        "description": "Permanently removes an author from the authors collection.",
+        "produces": ["application/json"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "type": "string", "description": "MongoDB ObjectId of the author to delete", "example": "665f1a2b3c4d5e6f7a8b9c0d" }
+        ],
+        "responses": {
+          "200": { "description": "Author deleted successfully" },
+          "400": { "description": "Invalid ID format" },
+          "404": { "description": "Author not found" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Book": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string", "example": "665f1a2b3c4d5e6f7a8b9c0d" },
+        "title": { "type": "string", "example": "Things Fall Apart" },
+        "authorName": { "type": "string", "example": "Chinua Achebe" },
+        "genre": { "type": "string", "example": "Literary Fiction" },
+        "publishedYear": { "type": "integer", "example": 1958 },
+        "isbn": { "type": "string", "example": "9780385474542" },
+        "pageCount": { "type": "integer", "example": 209 },
+        "language": { "type": "string", "example": "English" },
+        "synopsis": { "type": "string", "example": "The story of Okonkwo, a proud Igbo warrior whose world is disrupted by the arrival of European colonizers." }
+      }
+    },
+    "BookInput": {
+      "type": "object",
+      "required": ["title", "authorName", "genre", "publishedYear", "isbn", "pageCount", "language", "synopsis"],
+      "properties": {
+        "title": { "type": "string", "example": "Things Fall Apart" },
+        "authorName": { "type": "string", "example": "Chinua Achebe" },
+        "genre": { "type": "string", "example": "Literary Fiction" },
+        "publishedYear": { "type": "integer", "example": 1958 },
+        "isbn": { "type": "string", "example": "9780385474542" },
+        "pageCount": { "type": "integer", "example": 209 },
+        "language": { "type": "string", "example": "English" },
+        "synopsis": { "type": "string", "example": "The story of Okonkwo, a proud Igbo warrior whose world is disrupted by the arrival of European colonizers." }
+      }
+    },
+    "Author": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string", "example": "665f1a2b3c4d5e6f7a8b9c0d" },
+        "firstName": { "type": "string", "example": "Chinua" },
+        "lastName": { "type": "string", "example": "Achebe" },
+        "nationality": { "type": "string", "example": "Nigerian" },
+        "birthYear": { "type": "integer", "example": 1930 },
+        "knownFor": { "type": "string", "example": "Things Fall Apart, Arrow of God, No Longer at Ease" }
+      }
+    },
+    "AuthorInput": {
+      "type": "object",
+      "required": ["firstName", "lastName", "nationality", "birthYear", "knownFor"],
+      "properties": {
+        "firstName": { "type": "string", "example": "Chinua" },
+        "lastName": { "type": "string", "example": "Achebe" },
+        "nationality": { "type": "string", "example": "Nigerian" },
+        "birthYear": { "type": "integer", "example": 1930 },
+        "knownFor": { "type": "string", "example": "Things Fall Apart, Arrow of God, No Longer at Ease" }
+      }
+    }
+  }
+}
