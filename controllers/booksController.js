@@ -1,6 +1,7 @@
 const { getAllBooks, getBookById, createBook, updateBook, deleteBook } = require('../models/booksModel');
 
-const REQUIRED_FIELDS = ['firstName', 'lastName', 'nationality', 'birthYear', 'knownFor'];
+// 8 fields — satisfies the 7+ field requirement
+const REQUIRED_FIELDS = ['title', 'authorName', 'genre', 'publishedYear', 'isbn', 'pageCount', 'language', 'synopsis'];
 
 function validate(body, requireAll) {
   const errors = [];
@@ -13,70 +14,79 @@ function validate(body, requireAll) {
     }
   }
 
-  if (body.birthYear !== undefined) {
-    const y = Number(body.birthYear);
-    if (isNaN(y) || y < 1800 || y > new Date().getFullYear()) {
-      errors.push('birthYear must be a valid year between 1800 and present');
+  if (body.publishedYear !== undefined) {
+    const y = Number(body.publishedYear);
+    if (isNaN(y) || y < 1000 || y > new Date().getFullYear() + 2) {
+      errors.push('publishedYear must be a valid year (1000 to present+2)');
     }
   }
 
-  if (body.firstName !== undefined && typeof body.firstName !== 'string') {
-    errors.push('firstName must be a string');
+  if (body.pageCount !== undefined) {
+    const p = Number(body.pageCount);
+    if (isNaN(p) || p <= 0) {
+      errors.push('pageCount must be a positive number');
+    }
   }
 
-  if (body.lastName !== undefined && typeof body.lastName !== 'string') {
-    errors.push('lastName must be a string');
+  if (body.isbn !== undefined) {
+    const isbn = String(body.isbn).replace(/[-\s]/g, '');
+    if (isbn.length !== 10 && isbn.length !== 13) {
+      errors.push('isbn must be a valid 10 or 13 digit ISBN');
+    }
   }
 
   return errors;
 }
 
-// GET /authors
+// GET /books
 async function getAll(req, res) {
   try {
-    const authors = await getAllAuthors();
-    res.status(200).json(authors);
+    const books = await getAllBooks();
+    res.status(200).json(books);
   } catch (err) {
-    console.error('getAll authors:', err);
-    res.status(500).json({ error: 'Failed to retrieve authors' });
+    console.error('getAll books:', err);
+    res.status(500).json({ error: 'Failed to retrieve books' });
   }
 }
 
-// GET /authors/:id
+// GET /books/:id
 async function getOne(req, res) {
   try {
-    const author = await getAuthorById(req.params.id);
-    if (!author) return res.status(404).json({ error: 'Author not found' });
-    res.status(200).json(author);
+    const book = await getBookById(req.params.id);
+    if (!book) return res.status(404).json({ error: 'Book not found' });
+    res.status(200).json(book);
   } catch (err) {
-    console.error('getOne author:', err);
-    res.status(400).json({ error: 'Invalid ID or author not found' });
+    console.error('getOne book:', err);
+    res.status(400).json({ error: 'Invalid ID or book not found' });
   }
 }
 
-// POST /authors
+// POST /books
 async function create(req, res) {
   try {
     const errors = validate(req.body, true);
     if (errors.length > 0) {
       return res.status(400).json({ error: 'Validation failed', details: errors });
     }
-    const { firstName, lastName, nationality, birthYear, knownFor } = req.body;
-    const result = await createAuthor({
-      firstName,
-      lastName,
-      nationality,
-      birthYear: Number(birthYear),
-      knownFor,
+    const { title, authorName, genre, publishedYear, isbn, pageCount, language, synopsis } = req.body;
+    const result = await createBook({
+      title,
+      authorName,
+      genre,
+      publishedYear: Number(publishedYear),
+      isbn: String(isbn),
+      pageCount: Number(pageCount),
+      language,
+      synopsis,
     });
-    res.status(201).json({ message: 'Author created successfully', id: result.insertedId });
+    res.status(201).json({ message: 'Book created successfully', id: result.insertedId });
   } catch (err) {
-    console.error('create author:', err);
-    res.status(500).json({ error: 'Failed to create author' });
+    console.error('create book:', err);
+    res.status(500).json({ error: 'Failed to create book' });
   }
 }
 
-// PUT /authors/:id
+// PUT /books/:id
 async function update(req, res) {
   try {
     if (Object.keys(req.body).length === 0) {
@@ -86,24 +96,24 @@ async function update(req, res) {
     if (errors.length > 0) {
       return res.status(400).json({ error: 'Validation failed', details: errors });
     }
-    const result = await updateAuthor(req.params.id, req.body);
-    if (result.matchedCount === 0) return res.status(404).json({ error: 'Author not found' });
-    res.status(200).json({ message: 'Author updated successfully' });
+    const result = await updateBook(req.params.id, req.body);
+    if (result.matchedCount === 0) return res.status(404).json({ error: 'Book not found' });
+    res.status(200).json({ message: 'Book updated successfully' });
   } catch (err) {
-    console.error('update author:', err);
-    res.status(400).json({ error: 'Failed to update author' });
+    console.error('update book:', err);
+    res.status(400).json({ error: 'Failed to update book' });
   }
 }
 
-// DELETE /authors/:id
+// DELETE /books/:id
 async function remove(req, res) {
   try {
-    const result = await deleteAuthor(req.params.id);
-    if (result.deletedCount === 0) return res.status(404).json({ error: 'Author not found' });
-    res.status(200).json({ message: 'Author deleted successfully' });
+    const result = await deleteBook(req.params.id);
+    if (result.deletedCount === 0) return res.status(404).json({ error: 'Book not found' });
+    res.status(200).json({ message: 'Book deleted successfully' });
   } catch (err) {
-    console.error('delete author:', err);
-    res.status(400).json({ error: 'Failed to delete author' });
+    console.error('delete book:', err);
+    res.status(400).json({ error: 'Failed to delete book' });
   }
 }
 

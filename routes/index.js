@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../swagger.json');
+const booksRouter = require('./books');
+const authorsRouter = require('./authors');
 
-router.use('/', swaggerUi.serve);
-router.get('/', swaggerUi.setup(swaggerDocument));
+router.get('/', (req, res) => {
+  res.send('Library API — visit /api-docs for Swagger documentation.');
+});
+
+router.use('/books', booksRouter);
+router.use('/authors', authorsRouter);
 
 module.exports = router;
