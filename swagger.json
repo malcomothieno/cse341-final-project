@@ -5,7 +5,7 @@
     "description": "RESTful API for managing a library database. Full CRUD operations on Books (8 fields) and Authors collections with data validation and error handling.",
     "version": "1.0.0"
   },
-  "host": "YOUR-RENDER-URL.onrender.com",
+  "host": "https://cse341-final-project-ze1g.onrender.com",
   "schemes": ["https"],
   "tags": [
     { "name": "Books", "description": "Endpoints for managing book records — 8 fields per document" },
